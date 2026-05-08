@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outils — Solutions Pellerin × Agendrix</title>
+<meta name="description" content="Outils interactifs Solutions Pellerin pour la démo Agendrix : estimateur de coûts et architecture de la solution BI.">
+<style>
+  :root {
+    --navy: #1c2d4a;
+    --coral: #ff7a3d;
+    --pink: #d63384;
+    --teal: #1ec0b0;
+    --bg: #f7f9fc;
+    --card: #ffffff;
+    --grey: #5a6478;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--navy);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 48px 28px 64px; }
+  .logo-wrap { display: flex; align-items: center; gap: 22px; margin-bottom: 36px; flex-wrap: wrap; }
+  .logo-wrap img.logo-sp { height: 70px; width: auto; max-width: 320px; }
+  .logo-wrap img.logo-ag { height: 70px; width: auto; max-width: 280px; }
+  .logo-sep { font-size: 26px; font-weight: 300; color: var(--grey); opacity: 0.5; }
+  h1 {
+    font-size: 42px; font-weight: 800; letter-spacing: -1px;
+    margin: 0 0 14px; line-height: 1.1;
+  }
+  h1 .accent {
+    background: linear-gradient(90deg, var(--coral), var(--pink) 50%, var(--teal));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  p.lead { font-size: 18px; color: var(--grey); max-width: 720px; margin: 0 0 40px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; }
+  .card {
+    background: var(--card); border-radius: 16px; padding: 28px;
+    border: 1px solid #e6ecf2; transition: all 0.2s;
+    text-decoration: none; color: inherit; display: block;
+  }
+  .card:hover { border-color: #cdd6e4; box-shadow: 0 8px 24px rgba(28,45,74,0.08); transform: translateY(-2px); }
+  .card .ribbon { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; margin-bottom: 14px; color: white; }
+  .card.estim .ribbon { background: var(--coral); }
+  .card.archi .ribbon { background: var(--teal); }
+  .card h2 { font-size: 22px; font-weight: 800; margin: 0 0 8px; color: var(--navy); }
+  .card p { font-size: 14.5px; color: var(--grey); margin: 0 0 16px; }
+  .card .arrow { font-size: 14px; font-weight: 700; color: var(--navy); }
+  .card.estim .arrow { color: var(--coral); }
+  .card.archi .arrow { color: var(--teal); }
+  footer { margin-top: 56px; padding-top: 24px; border-top: 1px solid #e6ecf2; font-size: 13px; color: var(--grey); }
+  footer a { color: var(--navy); text-decoration: none; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="logo-wrap">
+    <img class="logo-sp" src="soltutions-pellerin.png" alt="Solutions Pellerin">
+    <span class="logo-sep">×</span>
+    <img class="logo-ag" src="agendrix-marque-logo-signature-greenery.png" alt="Agendrix">
+  </div>
+
+  <h1>Outils <span class="accent">interactifs</span></h1>
+  <p class="lead">
+    Deux outils pour explorer la démonstration BI Agendrix réalisée par Solutions Pellerin :
+    estimer le coût d'implantation et visualiser l'architecture de la solution.
+  </p>
+
+  <div class="grid">
+    <a class="card estim" href="Estimateur.html">
+      <span class="ribbon">Estimateur</span>
+      <h2>Estimateur de coûts</h2>
+      <p>Évaluez rapidement le coût d'une implantation BI sur mesure selon vos besoins.</p>
+      <span class="arrow">Ouvrir l'estimateur →</span>
+    </a>
+
+    <a class="card archi" href="Architecture.html">
+      <span class="ribbon">Architecture</span>
+      <h2>Architecture de la solution</h2>
+      <p>Visualisez l'architecture décou­plée extracteur Python + Power BI utilisée dans la démo.</p>
+      <span class="arrow">Voir l'architecture →</span>
+    </a>
+  </div>
+
+  <footer>
+    Réalisé par <a href="https://www.solutionspellerin.com">Solutions Pellerin</a>
+    — démonstration BI sur l'API Agendrix.
+  </footer>
+
+</div>
+</body>
+</html>

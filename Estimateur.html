@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Solutions Pellerin · Estimateur projet BI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --navy: #1c2d4a;
+    --navy-light: #2c4068;
+    --coral: #ff7a3d;
+    --pink: #d63384;
+    --teal: #1ec0b0;
+    --bg: #f7f9fc;
+    --card: #ffffff;
+    --grey: #5a6478;
+    --grey-light: #e6ebf2;
+    --green: #1ec0b0;
+    --red: #e85a5a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--navy); font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+  /* Hero */
+  .hero {
+    padding: 56px 48px 48px;
+    background:
+      radial-gradient(1100px 460px at 100% -10%, rgba(255,122,61,0.18), transparent 60%),
+      radial-gradient(900px 480px at 0% 110%, rgba(30,192,176,0.18), transparent 60%),
+      linear-gradient(135deg, #ffffff 0%, #f0f4fa 100%);
+    border-bottom: 1px solid var(--grey-light);
+    position: relative; overflow: hidden;
+  }
+  .logo-wrap { display: flex; align-items: center; gap: 22px; margin-bottom: 28px; }
+  .logo-wrap img.logo-sp { height: 80px; width: auto; max-width: 360px; }
+  .logo-wrap img.logo-ag { height: 80px; width: auto; max-width: 320px; }
+  .logo-sep { font-size: 26px; font-weight: 300; color: var(--grey); opacity: 0.5; user-select: none; line-height: 1; }
+  .logo-fallback { font-weight: 900; letter-spacing: -1px; line-height: 0.9; }
+  .logo-fallback .l1, .logo-fallback .l2 { font-size: 32px; color: var(--navy); }
+  .logo-fallback .accent-teal { color: var(--teal); }
+  .logo-fallback .accent-pink { color: var(--pink); }
+  .logo-fallback .accent-coral { color: var(--coral); }
+
+  .hero h1 {
+    font-size: 52px; font-weight: 800; letter-spacing: -1.5px;
+    color: var(--navy); margin-bottom: 14px; line-height: 1.05;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(90deg, var(--coral), var(--pink) 50%, var(--teal));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p.lead { font-size: 19px; color: var(--grey); max-width: 720px; }
+
+  /* Layout */
+  .container { max-width: 1240px; margin: 0 auto; padding: 56px 48px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: start; }
+
+  /* Questionnaire */
+  .questions h2 {
+    font-size: 26px; font-weight: 800; color: var(--navy); margin-bottom: 6px; letter-spacing: -0.4px;
+  }
+  .questions .sub {
+    color: var(--grey); font-size: 15px; margin-bottom: 24px;
+  }
+  .qcard {
+    background: white; border-radius: 14px; padding: 18px 20px;
+    border: 1px solid var(--grey-light); margin-bottom: 12px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .qcard:hover { border-color: #cdd6e4; box-shadow: 0 4px 14px rgba(28,45,74,0.06); }
+  .qcard .qhead { display: flex; gap: 14px; align-items: flex-start; }
+  .qcard .qicon {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700; color: white;
+  }
+  .qcard:nth-child(odd) .qicon { background: var(--coral); }
+  .qcard:nth-child(even) .qicon { background: var(--teal); }
+  .qcard .qbody { flex: 1; }
+  .qcard .qtitle {
+    font-weight: 700; font-size: 15.5px; color: var(--navy); margin-bottom: 4px;
+  }
+  .qcard .qhint {
+    color: var(--grey); font-size: 13.5px;
+  }
+  .toggle {
+    display: inline-flex; gap: 4px; margin-top: 10px;
+    background: var(--bg); padding: 4px; border-radius: 999px;
+  }
+  .toggle button {
+    border: none; background: transparent; cursor: pointer;
+    padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    color: var(--grey); transition: all 0.2s ease;
+  }
+  .toggle button.active.yes { background: var(--green); color: white; box-shadow: 0 2px 6px rgba(30,192,176,0.35); }
+  .toggle button.active.no  { background: var(--red);   color: white; box-shadow: 0 2px 6px rgba(232,90,90,0.35); }
+  .toggle button.active.maybe { background: var(--navy-light); color: white; }
+
+  /* Scope sliders */
+  .scope {
+    background: linear-gradient(135deg, #fff 0%, #f5f8fc 100%);
+    border-radius: 14px; padding: 22px 24px;
+    border: 1px solid var(--grey-light); margin-bottom: 28px;
+    box-shadow: 0 2px 10px rgba(28,45,74,0.05);
+  }
+  .scope h3 {
+    font-size: 16px; font-weight: 700; color: var(--navy);
+    margin-bottom: 4px; display: flex; align-items: center; gap: 8px;
+  }
+  .scope h3 .pill {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+    background: var(--coral); color: white; padding: 2px 8px; border-radius: 999px;
+  }
+  .scope .shint {
+    font-size: 13px; color: var(--grey); margin-bottom: 18px;
+  }
+  .slider-row {
+    display: grid; grid-template-columns: 1fr; gap: 16px;
+  }
+  .slider-block { }
+  .slider-label {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 6px;
+  }
+  .slider-label .v {
+    font-size: 22px; font-weight: 800; color: var(--coral); line-height: 1;
+  }
+  .slider-label .v.teal { color: var(--teal); }
+  input[type="range"] {
+    width: 100%; -webkit-appearance: none; appearance: none;
+    height: 8px; border-radius: 999px;
+    background: linear-gradient(90deg, var(--teal), var(--coral));
+    outline: none; cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: white; border: 3px solid var(--navy);
+    cursor: pointer; box-shadow: 0 2px 6px rgba(28,45,74,0.25);
+    transition: transform 0.15s ease;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+  input[type="range"]::-moz-range-thumb {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: white; border: 3px solid var(--navy);
+    cursor: pointer; box-shadow: 0 2px 6px rgba(28,45,74,0.25);
+  }
+  .slider-bounds {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--grey); margin-top: 4px;
+  }
+  .density {
+    margin-top: 14px; padding: 10px 14px; border-radius: 10px;
+    background: var(--bg); font-size: 12.5px; color: var(--grey);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .density strong { color: var(--navy); }
+
+  .reassure {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: linear-gradient(135deg, rgba(30,192,176,0.10), rgba(30,192,176,0.04));
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 22px;
+    border-left: 3px solid var(--teal);
+    font-size: 13.5px; color: var(--navy); line-height: 1.55;
+  }
+  .reassure .rico { font-size: 20px; flex-shrink: 0; line-height: 1.2; }
+  .reassure strong { color: var(--navy); font-weight: 700; }
+
+  /* Result panel */
+  .result { position: sticky; top: 24px; }
+  .result-card {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: white; border-radius: 20px; padding: 32px 28px;
+    box-shadow: 0 10px 32px rgba(28,45,74,0.16);
+    position: relative; overflow: hidden;
+  }
+  .result-card::before {
+    content: ""; position: absolute; top: -80px; right: -80px;
+    width: 240px; height: 240px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,122,61,0.30), transparent 70%);
+  }
+  .result-card::after {
+    content: ""; position: absolute; bottom: -100px; left: -80px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(30,192,176,0.30), transparent 70%);
+  }
+  .result-label {
+    text-transform: uppercase; letter-spacing: 1.4px; font-size: 11px;
+    color: rgba(255,255,255,0.7); font-weight: 700; margin-bottom: 8px;
+    position: relative;
+  }
+  .result-time {
+    font-size: 56px; font-weight: 800; line-height: 1;
+    margin-bottom: 4px; position: relative;
+    background: linear-gradient(135deg, #ffffff, #ffd9c4);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .result-unit {
+    font-size: 15px; color: rgba(255,255,255,0.75); margin-bottom: 24px; position: relative;
+  }
+  .gauge {
+    position: relative; height: 10px; border-radius: 999px;
+    background: rgba(255,255,255,0.15); overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .gauge-fill {
+    height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, var(--teal), var(--coral) 60%, var(--pink));
+    width: 50%; transition: width 0.5s ease;
+  }
+  .stats-mini {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;
+    position: relative;
+  }
+  .stat-mini {
+    background: rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 16px;
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+  .stat-mini .v { font-size: 22px; font-weight: 800; color: white; line-height: 1.1; }
+  .stat-mini .l { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+
+  .verdict {
+    background: rgba(255,255,255,0.10); border-radius: 14px;
+    padding: 16px 18px; font-size: 14px; line-height: 1.55;
+    border-left: 3px solid var(--coral);
+    position: relative;
+  }
+  .verdict.good { border-left-color: var(--teal); }
+  .verdict.warn { border-left-color: var(--coral); }
+  .verdict.bad  { border-left-color: var(--pink); }
+  .verdict strong { color: white; }
+
+  .warning-box {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: linear-gradient(135deg, rgba(245,184,0,0.14), rgba(245,184,0,0.05));
+    border-radius: 12px; padding: 14px 16px; margin-top: 16px;
+    border-left: 3px solid #f5b800;
+    font-size: 12.5px; color: var(--navy); line-height: 1.55;
+    font-style: italic;
+  }
+  .warning-box .wico { font-size: 20px; flex-shrink: 0; line-height: 1.2; font-style: normal; }
+
+  /* CTA */
+  .cta {
+    background: white; border-radius: 16px; padding: 24px;
+    margin-top: 16px; border: 1px solid var(--grey-light);
+    text-align: center;
+  }
+  .cta .ctitle { font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .cta .cdesc { font-size: 13.5px; color: var(--grey); margin-bottom: 14px; }
+  .cta a {
+    display: inline-block; background: var(--coral); color: white;
+    padding: 12px 22px; border-radius: 999px; text-decoration: none;
+    font-weight: 700; font-size: 14px;
+    box-shadow: 0 6px 18px rgba(255,122,61,0.35);
+    transition: transform 0.2s ease;
+  }
+  .cta a:hover { transform: translateY(-2px); }
+
+  /* Reset button */
+  .reset-btn {
+    background: transparent; border: 1px solid var(--grey-light); color: var(--grey);
+    padding: 8px 18px; border-radius: 999px; cursor: pointer;
+    font-size: 13px; font-weight: 600; margin-top: 16px;
+    transition: all 0.2s ease;
+  }
+  .reset-btn:hover { background: var(--grey-light); color: var(--navy); }
+
+  footer {
+    text-align: center; padding: 28px; color: var(--grey); font-size: 13px;
+    border-top: 1px solid var(--grey-light);
+  }
+
+  @media (max-width: 900px) {
+    .hero { padding: 40px 24px; }
+    .hero h1 { font-size: 36px; }
+    .container { grid-template-columns: 1fr; padding: 40px 24px; }
+    .result { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="logo-wrap">
+    <img class="logo-sp" src="soltutions-pellerin.png" alt="Solutions Pellerin" onerror="this.style.display='none'; document.getElementById('lf').style.display='block';">
+    <div id="lf" class="logo-fallback" style="display:none;">
+      <div class="l1">SOLUTIONS</div>
+      <div class="l2">P<span class="accent-pink">E</span><span class="accent-teal">L</span>L<span class="accent-coral">E</span>R<span class="accent-coral">i</span>N</div>
+    </div>
+    <span class="logo-sep">×</span>
+    <img class="logo-ag" src="agendrix-marque-logo-signature-greenery.png" alt="Agendrix">
+  </div>
+  <h1>Combien ça coûte? <span class="gradient">Ça dépend.</span></h1>
+  <p class="lead">Le coût et le délai d'un projet BI dépendent du scope choisi et de votre niveau de préparation. Ajustez les 2 curseurs et répondez aux 6 questions ci-dessous pour voir une estimation en temps réel.</p>
+</header>
+
+<div class="container">
+  <div class="questions">
+    <div class="scope">
+      <h3>Le scope que vous voulez <span class="pill">Étape 1</span></h3>
+      <div class="shint">Combien de pages et de visuels dans votre dashboard? Bougez les curseurs pour ajuster.</div>
+      <div class="slider-row">
+        <div class="slider-block">
+          <div class="slider-label">
+            <span>Nombre de pages</span>
+            <span class="v" id="pagesV">4</span>
+          </div>
+          <input type="range" id="pagesS" min="1" max="10" value="4" step="1">
+          <div class="slider-bounds"><span>1 page</span><span>10 pages</span></div>
+        </div>
+        <div class="slider-block">
+          <div class="slider-label">
+            <span>Nombre total de visuels</span>
+            <span class="v teal" id="visualsV">20</span>
+          </div>
+          <input type="range" id="visualsS" min="3" max="60" value="20" step="1">
+          <div class="slider-bounds"><span>3 visuels</span><span>60 visuels</span></div>
+        </div>
+      </div>
+      <div class="density">
+        <span>Densité moyenne :</span>
+        <span><strong id="density">5,0</strong> visuels par page</span>
+      </div>
+    </div>
+
+    <h2>Votre niveau de préparation</h2>
+    <p class="sub">Étape 2 — Cliquez "Oui", "Plus ou moins" ou "Non" pour chaque question. L'estimation se met à jour automatiquement à droite.</p>
+
+    <div class="reassure">
+      <span class="rico">💡</span>
+      <span><strong>Pas familier avec certains termes techniques?</strong> (OAuth, Azure AD, App Registration, refresh token...) C'est tout à fait correct — on s'occupe de la mise en place pour vous. Répondez au meilleur de votre connaissance.</span>
+    </div>
+
+    <div class="qcard" data-id="kpi">
+      <div class="qhead">
+        <div class="qicon">1</div>
+        <div class="qbody">
+          <div class="qtitle">Vos KPI sont-ils clairement définis?</div>
+          <div class="qhint">Vous savez quoi mesurer (taux d'absentéisme, OT, coût horaire, etc.) et pourquoi.</div>
+          <div class="toggle">
+            <button class="yes" data-val="yes">Oui</button>
+            <button class="maybe" data-val="maybe">Plus ou moins</button>
+            <button class="no" data-val="no">Non</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qcard" data-id="data">
+      <div class="qhead">
+        <div class="qicon">2</div>
+        <div class="qbody">
+          <div class="qtitle">Maîtrisez-vous votre source de données Agendrix?</div>
+          <div class="qhint">Quelqu'un dans l'équipe sait quel champ veut dire quoi, où sont les exceptions, comment se découpent les sites/équipes.</div>
+          <div class="toggle">
+            <button class="yes" data-val="yes">Oui</button>
+            <button class="maybe" data-val="maybe">Plus ou moins</button>
+            <button class="no" data-val="no">Non</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qcard" data-id="m365">
+      <div class="qhead">
+        <div class="qicon">3</div>
+        <div class="qbody">
+          <div class="qtitle">Vos accès Microsoft 365 sont-ils prêts?</div>
+          <div class="qhint">Tenant Microsoft 365 actif + licence Power BI Pro + permissions pour créer une App Registration Azure AD.</div>
+          <div class="toggle">
+            <button class="yes" data-val="yes">Oui</button>
+            <button class="maybe" data-val="maybe">Plus ou moins</button>
+            <button class="no" data-val="no">Non</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qcard" data-id="agendrix">
+      <div class="qhead">
+        <div class="qicon">4</div>
+        <div class="qbody">
+          <div class="qtitle">Avez-vous le forfait <em>Plan Plus</em> chez Agendrix?</div>
+          <div class="qhint">L'accès à l'API ouverte d'Agendrix (et donc à l'extraction de vos données) est inclus uniquement dans le forfait Plan Plus. Les forfaits Essentiel et Pro ne le permettent pas.</div>
+          <div class="toggle">
+            <button class="yes" data-val="yes">Oui</button>
+            <button class="maybe" data-val="maybe">Je ne sais pas</button>
+            <button class="no" data-val="no">Non</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qcard" data-id="ti">
+      <div class="qhead">
+        <div class="qicon">5</div>
+        <div class="qbody">
+          <div class="qtitle">Votre équipe TI est-elle disponible pour débloquer?</div>
+          <div class="qhint">Quelqu'un peut donner l'admin consent Azure AD ou créer un site SharePoint dédié dans la semaine.</div>
+          <div class="toggle">
+            <button class="yes" data-val="yes">Oui</button>
+            <button class="maybe" data-val="maybe">Plus ou moins</button>
+            <button class="no" data-val="no">Non</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qcard" data-id="champ">
+      <div class="qhead">
+        <div class="qicon">6</div>
+        <div class="qbody">
+          <div class="qtitle">Avez-vous un champion BI à l'interne?</div>
+          <div class="qhint">Quelqu'un qui prend le relais une fois le projet livré, fait évoluer les rapports et forme les utilisateurs.</div>
+          <div class="toggle">
+            <button class="yes" data-val="yes">Oui</button>
+            <button class="maybe" data-val="maybe">Plus ou moins</button>
+            <button class="no" data-val="no">Non</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="reset-btn" id="reset">Réinitialiser</button>
+  </div>
+
+  <div class="result">
+    <div class="result-card">
+      <div class="result-label">Estimation en temps réel</div>
+      <div class="result-time" id="time">— j</div>
+      <div class="result-unit" id="unit">jours-personne · livraison clé en main</div>
+
+      <div class="gauge"><div class="gauge-fill" id="gaugeFill" style="width: 50%;"></div></div>
+
+      <div class="stats-mini">
+        <div class="stat-mini">
+          <div class="v" id="cost">—</div>
+          <div class="l">Plage budget (CAD)</div>
+        </div>
+        <div class="stat-mini">
+          <div class="v" id="weeks">—</div>
+          <div class="l">Délai calendaire</div>
+        </div>
+      </div>
+
+      <div class="verdict" id="verdict">
+        <strong>Répondez aux questions ↑</strong> pour voir une estimation personnalisée.
+      </div>
+    </div>
+
+    <div class="warning-box">
+      <span class="wico">⚠️</span>
+      <span>Le délai calendaire et le montant indiqués sont une estimation à des fins de cadrage uniquement. Le coût et l'échéancier réels peuvent varier selon plusieurs facteurs (complexité des données, demandes spécifiques, ajustements en cours de projet, disponibilités). Il ne s'agit pas d'un devis formel.</span>
+    </div>
+
+    <div class="cta">
+      <div class="ctitle">Vous voulez la vraie estimation?</div>
+      <div class="cdesc">Un appel de 30 min suffit pour valider votre plan de match.</div>
+      <a href="https://solutionspellerin.zohobookings.ca/" target="_blank" rel="noopener">Réservons 30 minutes →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © Solutions Pellerin · Marie-Pier Pellerin · mp@solutionspellerin.com
+</footer>
+
+<script>
+  const questions = ['kpi', 'data', 'm365', 'agendrix', 'ti', 'champ'];
+  const answers = {};
+
+  // ============ Modèle d'estimation ============
+  // Pipeline & données (setup) : 2 j + pénalités préparation
+  // Build dashboard : 0,4 j par page + 0,08 j par visuel
+  // Pénalités préparation : "non" = +1,5 j, "plus ou moins" = +0,75 j
+  // Manquant = +0,4 j (incite à répondre)
+  // Borne haute = borne basse × 1,25 (incertitude résiduelle)
+  const PIPELINE_BASE_DAYS = 2;
+  const DAYS_PER_PAGE = 0.4;
+  const DAYS_PER_VISUAL = 0.08;
+  const RATE_CAD_PER_DAY = 1000;
+  const UNCERTAINTY = 1.25;
+  const PENALTY_NO = 1.5;
+  const PENALTY_MAYBE = 0.75;
+  const PENALTY_MISSING = 0.4;
+
+  function getScope() {
+    return {
+      pages: parseInt(document.getElementById('pagesS').value, 10),
+      visuals: parseInt(document.getElementById('visualsS').value, 10),
+    };
+  }
+
+  function compute() {
+    const scope = getScope();
+    const buildDays = scope.pages * DAYS_PER_PAGE + scope.visuals * DAYS_PER_VISUAL;
+
+    // Pénalités préparation
+    let prepPenalty = 0;
+    for (const q of questions) {
+      const v = answers[q];
+      if (v === 'no') prepPenalty += PENALTY_NO;
+      else if (v === 'maybe') prepPenalty += PENALTY_MAYBE;
+      else if (v === undefined) prepPenalty += PENALTY_MISSING;
+    }
+
+    const lo = PIPELINE_BASE_DAYS + buildDays + prepPenalty;
+    const hi = lo * UNCERTAINTY;
+
+    const weeksLo = Math.max(1, Math.ceil((lo / 5) * 1.4));
+    const weeksHi = Math.max(weeksLo + 1, Math.ceil((hi / 5) * 1.8));
+
+    const round500 = x => Math.round(x / 500) * 500;
+    const costLo = round500(lo * RATE_CAD_PER_DAY);
+    const costHi = round500(hi * RATE_CAD_PER_DAY);
+
+    // Verdict (basé sur niveau de préparation)
+    const answered = Object.values(answers).filter(v => v !== undefined).length;
+    const noCount = Object.values(answers).filter(v => v === 'no').length;
+    const yesCount = Object.values(answers).filter(v => v === 'yes').length;
+
+    let verdict, vClass;
+    if (answered === 0) {
+      vClass = 'warn';
+      verdict = "<strong>👉 Répondez à l'étape 2</strong> pour affiner l'estimation selon votre niveau de préparation.";
+    } else if (yesCount >= 5) {
+      vClass = 'good';
+      verdict = "<strong>🎯 Vous êtes prêts.</strong> " + scope.pages + " page" + (scope.pages>1?"s":"") + " · " + scope.visuals + " visuels livrables en <strong>" + Math.ceil(lo) + "–" + Math.ceil(hi) + " jours</strong>. Le focus sera la modélisation et le storytelling, pas la plomberie.";
+    } else if (noCount >= 3) {
+      vClass = 'bad';
+      verdict = "<strong>⚠️ Préparation à finaliser.</strong> Vaut la peine de cadrer KPI et accès <em>avant</em> de démarrer le BI. Sinon le projet s'étire et le coût grimpe vite.";
+    } else if (noCount >= 1 || answered < questions.length) {
+      vClass = 'warn';
+      verdict = "<strong>🔄 Quelques pré-requis à valider.</strong> Réalisable mais une demi-journée d'atelier de cadrage en amont vous fera économiser plusieurs jours plus tard.";
+    } else {
+      vClass = 'good';
+      verdict = "<strong>✓ Bon niveau de préparation.</strong> Le projet peut démarrer rapidement avec quelques clarifications mineures.";
+    }
+
+    return {
+      days: Math.ceil(lo) === Math.ceil(hi) ? Math.ceil(lo) : Math.ceil(lo) + "–" + Math.ceil(hi),
+      weeks: weeksLo === weeksHi ? weeksLo + " sem." : weeksLo + "–" + weeksHi + " sem.",
+      cost: "$" + (costLo/1000).toFixed(1).replace(/\.0$/,'') + "k–" + (costHi/1000).toFixed(1).replace(/\.0$/,'') + "k",
+      unitText: scope.pages + " page" + (scope.pages>1?"s":"") + " · " + scope.visuals + " visuels · livraison clé en main",
+      verdict, vClass,
+      gaugePct: Math.min(100, Math.max(8, (lo / 25) * 100))
+    };
+  }
+
+  function render() {
+    const r = compute();
+    document.getElementById('time').textContent = r.days + " j";
+    document.getElementById('weeks').textContent = r.weeks;
+    document.getElementById('cost').textContent = r.cost;
+    document.getElementById('unit').textContent = r.unitText;
+    document.getElementById('gaugeFill').style.width = r.gaugePct + "%";
+    const vEl = document.getElementById('verdict');
+    vEl.classList.remove('good', 'warn', 'bad');
+    vEl.classList.add(r.vClass);
+    vEl.innerHTML = r.verdict;
+  }
+
+  // Sliders
+  function syncScopeUI() {
+    const pages = parseInt(document.getElementById('pagesS').value, 10);
+    const visuals = parseInt(document.getElementById('visualsS').value, 10);
+    document.getElementById('pagesV').textContent = pages;
+    document.getElementById('visualsV').textContent = visuals;
+    document.getElementById('density').textContent = (visuals / pages).toFixed(1).replace('.', ',');
+  }
+  document.getElementById('pagesS').addEventListener('input', () => { syncScopeUI(); render(); });
+  document.getElementById('visualsS').addEventListener('input', () => { syncScopeUI(); render(); });
+
+  // Toggles préparation
+  document.querySelectorAll('.qcard').forEach(card => {
+    const id = card.dataset.id;
+    card.querySelectorAll('.toggle button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        card.querySelectorAll('.toggle button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        answers[id] = btn.dataset.val;
+        render();
+      });
+    });
+  });
+
+  document.getElementById('reset').addEventListener('click', () => {
+    document.querySelectorAll('.toggle button').forEach(b => b.classList.remove('active'));
+    for (const k of Object.keys(answers)) delete answers[k];
+    document.getElementById('pagesS').value = 4;
+    document.getElementById('visualsS').value = 20;
+    syncScopeUI();
+    render();
+  });
+
+  // Initial render
+  syncScopeUI();
+  render();
+</script>
+
+</body>
+</html>
